@@ -20,6 +20,7 @@ namespace AuthenticationSystem
         private void Form1_Load(object sender, EventArgs e)
         {
             Console.WriteLine("Hello World");
+            MessageBox.Show("Hello world");
         }
     }
 }
