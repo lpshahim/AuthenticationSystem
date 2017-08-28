@@ -42,6 +42,7 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.lblFPS = new System.Windows.Forms.Label();
+            this.showVectorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -104,7 +105,8 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addUserToolStripMenuItem,
-            this.authenticateToolStripMenuItem});
+            this.authenticateToolStripMenuItem,
+            this.showVectorToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -148,6 +150,13 @@
             this.lblFPS.Size = new System.Drawing.Size(0, 13);
             this.lblFPS.TabIndex = 12;
             // 
+            // showVectorToolStripMenuItem
+            // 
+            this.showVectorToolStripMenuItem.Name = "showVectorToolStripMenuItem";
+            this.showVectorToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.showVectorToolStripMenuItem.Text = "Show Vector";
+            this.showVectorToolStripMenuItem.Click += new System.EventHandler(this.showVectorToolStripMenuItem_Click);
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -161,6 +170,7 @@
             this.Controls.Add(this.btnAuthenticate);
             this.Controls.Add(this.menuStrip1);
             this.Name = "Form2";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Authentication";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -184,5 +194,6 @@
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Label lblFPS;
+        private System.Windows.Forms.ToolStripMenuItem showVectorToolStripMenuItem;
     }
 }
