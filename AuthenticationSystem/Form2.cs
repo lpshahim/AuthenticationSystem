@@ -464,9 +464,10 @@ namespace AuthenticationSystem
             //pictureBox1.Image = bitmap;
         }
 
-        void displayArrays()
+        string[] displayArrays()
         {
             String vector = "";
+            string[] vec = new string[18];
 
             //LIST ITERATION
             thumbBoneList.Sort();
@@ -476,62 +477,67 @@ namespace AuthenticationSystem
             pinkyBoneList.Sort();
 
             //THUMB
-            Console.Write("\nThumb\n");
+            //Console.Write("\nThumb\n");
             decimal thumbMetaAverage = 0;
             foreach (decimal values in thumbMetaTable.Values)
             {
                 thumbMetaAverage += values;
             }
-            thumbMetaAverage = Math.Round(thumbMetaAverage / thumbMetaCount, 2);
-            Console.Write("\n" + thumbMetaAverage);
+            thumbMetaAverage = Math.Floor(thumbMetaAverage / thumbMetaCount);
+            //Console.Write("\n" + thumbMetaAverage);
             vector += thumbMetaAverage + ", ";
+            vec[0] = thumbMetaAverage.ToString();
 
             decimal thumbProxAverage = 0;
             foreach (decimal values in thumbProxTable.Values)
             {
                 thumbProxAverage += values;
             }
-            thumbProxAverage = Math.Round(thumbProxAverage / thumbProxCount, 2);
-            Console.Write("\n" + thumbProxAverage);
+            thumbProxAverage = Math.Floor(thumbProxAverage / thumbProxCount);
+            //Console.Write("\n" + thumbProxAverage);
             vector += thumbProxAverage + ", ";
+            vec[1] = thumbProxAverage.ToString();
 
             decimal thumbIntAverage = 0;
             foreach (decimal values in thumbIntTable.Values)
             {
                 thumbIntAverage += values;
             }
-            thumbIntAverage = Math.Round(thumbIntAverage / thumbIntCount, 2);
-            Console.Write("\n" + thumbIntAverage);
+            thumbIntAverage = Math.Floor(thumbIntAverage / thumbIntCount);
+            //Console.Write("\n" + thumbIntAverage);
             vector += thumbIntAverage + ", ";
+            vec[2] = thumbIntAverage.ToString();
 
-            
             //INDEX
-            Console.Write("\nIndex\n");
+           // Console.Write("\nIndex\n");
             decimal indexMetaAverage = 0;
             foreach (decimal values in indexMetaTable.Values)
             {
                 indexMetaAverage += values;
             }
-            indexMetaAverage = Math.Round(indexMetaAverage / indexMetaCount, 2);
-            Console.Write("\n" + indexMetaAverage);
+            indexMetaAverage = Math.Floor(indexMetaAverage / indexMetaCount);
+           // Console.Write("\n" + indexMetaAverage);
             vector += indexMetaAverage + ", ";
+            vec[3] = indexMetaAverage.ToString();
 
             decimal indexProxAverage = 0;
             foreach (decimal values in indexProxTable.Values)
             {
                 indexProxAverage += values;
             }
-            indexProxAverage = Math.Round(indexProxAverage / indexProxCount, 2);
-            Console.Write("\n" + indexProxAverage);
+            indexProxAverage = Math.Floor(indexProxAverage / indexProxCount);
+            //Console.Write("\n" + indexProxAverage);
             vector += indexProxAverage + ", ";
+            vec[4] = indexProxAverage.ToString();
+
 
             decimal indexIntAverage = 0;
             foreach (decimal values in indexIntTable.Values)
             {
                 indexIntAverage += values;
             }
-            indexIntAverage = Math.Round(indexIntAverage / indexIntCount, 2);
-            Console.Write("\n" + indexIntAverage);
+            indexIntAverage = Math.Floor(indexIntAverage / indexIntCount);
+            //Console.Write("\n" + indexIntAverage);
             vector += indexIntAverage + ", ";
 
             decimal indexDistAverage = 0;
@@ -539,132 +545,150 @@ namespace AuthenticationSystem
             {
                 indexDistAverage += values;
             }
-            indexDistAverage = Math.Round(indexDistAverage / indexDistCount, 2);
-            Console.Write("\n" + indexDistAverage);
+            indexDistAverage = Math.Floor(indexDistAverage / indexDistCount);
+            //Console.Write("\n" + indexDistAverage);
             vector += indexDistAverage + ", ";
-
+            vec[5] = indexDistAverage.ToString();
 
 
             //MIDDLE
-            Console.Write("\nMiddle\n");
+            //Console.Write("\nMiddle\n");
             decimal middleMetaAverage = 0;
             foreach (decimal values in middleMetaTable.Values)
             {
                 middleMetaAverage += values;
             }
-            middleMetaAverage = Math.Round(middleMetaAverage / middleMetaCount, 2);
-            Console.Write("\n" + middleMetaAverage);
+            middleMetaAverage = Math.Floor(middleMetaAverage / middleMetaCount);
+            //Console.Write("\n" + middleMetaAverage);
             vector += middleMetaAverage + ", ";
+            vec[6] = middleMetaAverage.ToString();
 
             decimal middleProxAverage = 0;
             foreach (decimal values in middleProxTable.Values)
             {
                 middleProxAverage += values;
             }
-            middleProxAverage = Math.Round(middleProxAverage / middleProxCount, 2);
-            Console.Write("\n" + middleProxAverage);
+            middleProxAverage = Math.Floor(middleProxAverage / middleProxCount);
+            //Console.Write("\n" + middleProxAverage);
             vector += middleProxAverage + ", ";
+            vec[7] = middleProxAverage.ToString();
 
             decimal middleIntAverage = 0;
             foreach (decimal values in middleIntTable.Values)
             {
                 middleIntAverage += values;
             }
-            middleIntAverage = Math.Round(middleIntAverage / middleIntCount, 2);
-            Console.Write("\n" + middleIntAverage);
+            middleIntAverage = Math.Floor(middleIntAverage / middleIntCount);
+            //Console.Write("\n" + middleIntAverage);
             vector += middleIntAverage + ", ";
+            vec[8] = middleIntAverage.ToString();
 
             decimal middleDistAverage = 0;
             foreach (decimal values in middleDistTable.Values)
             {
                 middleDistAverage += values;
             }
-            middleDistAverage = Math.Round(middleDistAverage / middleDistCount, 2);
-            Console.Write("\n" + middleDistAverage);
+            middleDistAverage = Math.Floor(middleDistAverage / middleDistCount);
+            //Console.Write("\n" + middleDistAverage);
             vector += middleDistAverage + ", ";
+            vec[9] = middleDistAverage.ToString();
 
 
 
             //RING
-            Console.Write("\nRing\n");
+            //Console.Write("\nRing\n");
             decimal ringMetaAverage = 0;
             foreach (decimal values in ringMetaTable.Values)
             {
                 ringMetaAverage += values;
             }
-            ringMetaAverage = Math.Round(ringMetaAverage / ringMetaCount, 2);
-            Console.Write("\n" + ringMetaAverage);
+            ringMetaAverage = Math.Floor(ringMetaAverage / ringMetaCount);
+           // Console.Write("\n" + ringMetaAverage);
             vector += ringMetaAverage + ", ";
+            vec[10] = ringMetaAverage.ToString();
 
             decimal ringProxAverage = 0;
             foreach (decimal values in ringProxTable.Values)
             {
                 ringProxAverage += values;
             }
-            ringProxAverage = Math.Round(ringProxAverage / ringProxCount, 2);
-            Console.Write("\n" + ringProxAverage);
+            ringProxAverage = Math.Floor(ringProxAverage / ringProxCount);
+           // Console.Write("\n" + ringProxAverage);
             vector += ringProxAverage + ", ";
+            vec[11] = ringProxAverage.ToString();
 
             decimal ringIntAverage = 0;
             foreach (decimal values in ringIntTable.Values)
             {
                 ringIntAverage += values;
             }
-            ringIntAverage = Math.Round(ringIntAverage / ringIntCount, 2);
-            Console.Write("\n" + ringIntAverage);
+            ringIntAverage = Math.Floor(ringIntAverage / ringIntCount);
+            //Console.Write("\n" + ringIntAverage);
             vector += ringIntAverage + ", ";
+            vec[12] = ringIntAverage.ToString();
 
             decimal ringDistAverage = 0;
             foreach (decimal values in ringDistTable.Values)
             {
                 ringDistAverage += values;
             }
-            ringDistAverage = Math.Round(ringDistAverage / ringDistCount, 2);
-            Console.Write("\n" + ringDistAverage);
+            ringDistAverage = Math.Floor(ringDistAverage / ringDistCount);
+            //Console.Write("\n" + ringDistAverage);
             vector += ringDistAverage + ", ";
+            vec[13] = ringDistAverage.ToString();
 
 
 
             //pinky
-            Console.Write("\nPinky\n");
+           // Console.Write("\nPinky\n");
             decimal pinkyMetaAverage = 0;
             foreach (decimal values in pinkyMetaTable.Values)
             {
                 pinkyMetaAverage += values;
             }
-            pinkyMetaAverage = Math.Round(pinkyMetaAverage / pinkyMetaCount, 2);
-            Console.Write("\n" + pinkyMetaAverage);
+            pinkyMetaAverage = Math.Floor(pinkyMetaAverage / pinkyMetaCount);
+            //Console.Write("\n" + pinkyMetaAverage);
             vector += pinkyMetaAverage + ", ";
+            vec[14] = pinkyMetaAverage.ToString();
 
             decimal pinkyProxAverage = 0;
             foreach (decimal values in pinkyProxTable.Values)
             {
                 pinkyProxAverage += values;
             }
-            pinkyProxAverage = Math.Round(pinkyProxAverage / pinkyProxCount, 2);
-            Console.Write("\n" + pinkyProxAverage);
+            pinkyProxAverage = Math.Floor(pinkyProxAverage / pinkyProxCount);
+           // Console.Write("\n" + pinkyProxAverage);
             vector += pinkyProxAverage + ", ";
+            vec[15] = pinkyProxAverage.ToString();
 
             decimal pinkyIntAverage = 0;
             foreach (decimal values in pinkyIntTable.Values)
             {
                 pinkyIntAverage += values;
             }
-            pinkyIntAverage = Math.Round(pinkyIntAverage / pinkyIntCount, 2);
-            Console.Write("\n" + pinkyIntAverage);
+            pinkyIntAverage = Math.Floor(pinkyIntAverage / pinkyIntCount);
+            //Console.Write("\n" + pinkyIntAverage);
             vector += pinkyIntAverage + ", ";
+            vec[16] = pinkyIntAverage.ToString();
 
             decimal pinkyDistAverage = 0;
             foreach (decimal values in pinkyDistTable.Values)
             {
                 pinkyDistAverage += values;
             }
-            pinkyDistAverage = Math.Round(pinkyDistAverage / pinkyDistCount, 2);
-            Console.Write("\n" + pinkyDistAverage);
+            pinkyDistAverage = Math.Floor(pinkyDistAverage / pinkyDistCount);
+            //Console.Write("\n" + pinkyDistAverage);
             vector += pinkyDistAverage;
+            vec[17] = pinkyDistAverage.ToString();
 
             Console.WriteLine("\n\n" + vector);
             generateHash(vector);
+
+            User newUser = new User(txtPin.Text, vec);
+            newUser.DisplayOutput();
+            newUser.authenticatePin(txtPin.Text);
+
+            return vec;
             
         }
 
@@ -771,7 +795,7 @@ namespace AuthenticationSystem
                     FileStream fingerStream = File.Create(fingersCSVPath);
                     fingerStream.Close();
 
-                    timeLeft = 5;
+                    timeLeft = 10;
                     timer1.Start();
                     controller.StartConnection();
                     controller.FrameReady += newFrameHandler;
@@ -799,6 +823,11 @@ namespace AuthenticationSystem
             catch (Exception e) {
                 Console.WriteLine(e);
             }
+            
+        }
+
+        private void addUserToolStripMenuItem_Click(object sender, EventArgs e)
+        {
             
         }
 

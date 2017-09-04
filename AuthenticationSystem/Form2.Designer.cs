@@ -38,11 +38,11 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addUserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.authenticateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showVectorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.lblFPS = new System.Windows.Forms.Label();
-            this.showVectorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -116,12 +116,20 @@
             this.addUserToolStripMenuItem.Name = "addUserToolStripMenuItem";
             this.addUserToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.addUserToolStripMenuItem.Text = "Add User";
+            this.addUserToolStripMenuItem.Click += new System.EventHandler(this.addUserToolStripMenuItem_Click);
             // 
             // authenticateToolStripMenuItem
             // 
             this.authenticateToolStripMenuItem.Name = "authenticateToolStripMenuItem";
             this.authenticateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.authenticateToolStripMenuItem.Text = "Authenticate";
+            // 
+            // showVectorToolStripMenuItem
+            // 
+            this.showVectorToolStripMenuItem.Name = "showVectorToolStripMenuItem";
+            this.showVectorToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.showVectorToolStripMenuItem.Text = "Show Vector";
+            this.showVectorToolStripMenuItem.Click += new System.EventHandler(this.showVectorToolStripMenuItem_Click);
             // 
             // closeToolStripMenuItem
             // 
@@ -134,7 +142,7 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -149,13 +157,6 @@
             this.lblFPS.Name = "lblFPS";
             this.lblFPS.Size = new System.Drawing.Size(0, 13);
             this.lblFPS.TabIndex = 12;
-            // 
-            // showVectorToolStripMenuItem
-            // 
-            this.showVectorToolStripMenuItem.Name = "showVectorToolStripMenuItem";
-            this.showVectorToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.showVectorToolStripMenuItem.Text = "Show Vector";
-            this.showVectorToolStripMenuItem.Click += new System.EventHandler(this.showVectorToolStripMenuItem_Click);
             // 
             // Form2
             // 
