@@ -43,6 +43,7 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.lblFPS = new System.Windows.Forms.Label();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -97,7 +98,7 @@
             this.closeToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(273, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(267, 24);
             this.menuStrip1.TabIndex = 11;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -114,20 +115,20 @@
             // addUserToolStripMenuItem
             // 
             this.addUserToolStripMenuItem.Name = "addUserToolStripMenuItem";
-            this.addUserToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.addUserToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.addUserToolStripMenuItem.Text = "Add User";
             this.addUserToolStripMenuItem.Click += new System.EventHandler(this.addUserToolStripMenuItem_Click);
             // 
             // authenticateToolStripMenuItem
             // 
             this.authenticateToolStripMenuItem.Name = "authenticateToolStripMenuItem";
-            this.authenticateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.authenticateToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.authenticateToolStripMenuItem.Text = "Authenticate";
             // 
             // showVectorToolStripMenuItem
             // 
             this.showVectorToolStripMenuItem.Name = "showVectorToolStripMenuItem";
-            this.showVectorToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.showVectorToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.showVectorToolStripMenuItem.Text = "Show Vector";
             this.showVectorToolStripMenuItem.Click += new System.EventHandler(this.showVectorToolStripMenuItem_Click);
             // 
@@ -148,6 +149,7 @@
             // 
             // timer1
             // 
+            this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // lblFPS
@@ -158,11 +160,20 @@
             this.lblFPS.Size = new System.Drawing.Size(0, 13);
             this.lblFPS.TabIndex = 12;
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(9, 79);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(255, 23);
+            this.progressBar1.TabIndex = 13;
+            this.progressBar1.Click += new System.EventHandler(this.progressBar1_Click);
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(273, 83);
+            this.ClientSize = new System.Drawing.Size(267, 114);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.lblFPS);
             this.Controls.Add(this.lblTimer);
             this.Controls.Add(this.lblAuthenticate);
@@ -196,5 +207,6 @@
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Label lblFPS;
         private System.Windows.Forms.ToolStripMenuItem showVectorToolStripMenuItem;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }

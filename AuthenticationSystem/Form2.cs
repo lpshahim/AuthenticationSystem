@@ -9,6 +9,8 @@ using System;
 using System.Threading;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
+
 namespace AuthenticationSystem
 {
     public partial class Form2 : Form
@@ -23,7 +25,9 @@ namespace AuthenticationSystem
         Bitmap bitmap = new Bitmap(640, 480, System.Drawing.Imaging.PixelFormat.Format8bppIndexed);
         //Bitmap bitmap = new Bitmap(196, 246, System.Drawing.Imaging.PixelFormat.Format8bppIndexed);
 
-        int timeLeft;
+        bool checkAuthenticateEnrol = true;
+        String vector = "";
+        int timeLeft = 0;
         int fingerReadingCount = 0;
         int boneReadingCount = 0;
         int indexBonesCount, middleBonesCount, ringBonesCount, pinkyBonesCount, thumbBonesCount = 0;
@@ -172,7 +176,7 @@ namespace AuthenticationSystem
                     {
 
                         tempFingerMeasurements = finger.Type.ToString() + "," + finger.Length.ToString() + "," + finger.Width.ToString();
-                        using (StreamWriter fingerWriter = new StreamWriter(fingersCSVPath, true))
+                        /*using (StreamWriter fingerWriter = new StreamWriter(fingersCSVPath, true))
                         {
                             fingerWriter.WriteLine(tempFingerMeasurements);
 
@@ -180,8 +184,8 @@ namespace AuthenticationSystem
                             fingerReadingCount++;
 
                             fingerWriter.Close();
-                        }
-
+                        }*/
+                        fingerReadingCount++;
                         //Console.Write(temp);
                         //Console.Write(finger.Type + "\n" + finger.Length + "\n" + finger.Width);
 
@@ -254,13 +258,14 @@ namespace AuthenticationSystem
                                                 break;
                                         }
 
-                                        using (StreamWriter boneWriter = new StreamWriter(bonesCSVPath, true))
+                                        /*using (StreamWriter boneWriter = new StreamWriter(bonesCSVPath, true))
                                         {
                                             boneWriter.WriteLine(boneLength.Type + ", Index, " + indexMeasurements[countBones]);
                                             //indexBonesCount++;
                                             boneReadingCount++;
                                             boneWriter.Close();
-                                        }
+                                        }*/
+                                        boneReadingCount++;
                                         break;
                                     case 2:
                                         middleMeasurements[countBones] = (decimal)boneLength.Length;// + (decimal)boneLength.Width;
@@ -294,13 +299,14 @@ namespace AuthenticationSystem
                                                 break;
                                         }
 
-                                        using (StreamWriter boneWriter = new StreamWriter(bonesCSVPath, true))
+                                        /*using (StreamWriter boneWriter = new StreamWriter(bonesCSVPath, true))
                                         {
                                             boneWriter.WriteLine(boneLength.Type + ", Middle, " + middleMeasurements[countBones]);
                                             //middleBonesCount++;
                                             boneReadingCount++;
                                             boneWriter.Close();
-                                        }
+                                        }*/
+                                        boneReadingCount++;
                                         break;
                                     case 3:
                                         ringMeasurements[countBones] = (decimal)boneLength.Length;// + (decimal)boneLength.Width;
@@ -334,13 +340,14 @@ namespace AuthenticationSystem
                                                 break;
                                         }
 
-                                        using (StreamWriter boneWriter = new StreamWriter(bonesCSVPath, true))
+                                        /*using (StreamWriter boneWriter = new StreamWriter(bonesCSVPath, true))
                                         {
                                             boneWriter.WriteLine(boneLength.Type + ", Ring, " + ringMeasurements[countBones]);
                                             //ringBonesCount++;
                                             boneReadingCount++;
                                             boneWriter.Close();
-                                        }
+                                        }*/
+                                        boneReadingCount++;
                                         break;
                                     case 4:
                                         pinkyMeasurements[countBones] = (decimal)boneLength.Length;// + (decimal)boneLength.Width;
@@ -374,13 +381,14 @@ namespace AuthenticationSystem
                                                 break;
                                         }
 
-                                        using (StreamWriter boneWriter = new StreamWriter(bonesCSVPath, true))
+                                        /*using (StreamWriter boneWriter = new StreamWriter(bonesCSVPath, true))
                                         {
                                             boneWriter.WriteLine(boneLength.Type + ", Pinky, " + pinkyMeasurements[countBones]);
                                             //pinkyBonesCount++;
                                             boneReadingCount++;
                                             boneWriter.Close();
-                                        }
+                                        }*/
+                                        boneReadingCount++;
                                         break;
                                     case 5:
                                         {
@@ -417,14 +425,14 @@ namespace AuthenticationSystem
 
 
 
-                                                using (StreamWriter boneWriter = new StreamWriter(bonesCSVPath, true))
+                                                /*using (StreamWriter boneWriter = new StreamWriter(bonesCSVPath, true))
                                                 {
                                                     boneWriter.WriteLine(boneLength.Type + ", Thumb, " + thumbMeasurements[countBones]);
                                                     //thumbBonesCount++;
                                                     boneReadingCount++;
                                                     boneWriter.Close();
-                                                }
-
+                                                }*/
+                                                boneReadingCount++;
                                             }
                                             else { }
                                             break;
@@ -437,7 +445,8 @@ namespace AuthenticationSystem
                 } 
                 else
                 {
-                    MessageBox.Show("WRONG HAND USED. Please use right hand.");
+                    controller.StopConnection();
+                    Console.WriteLine("Wrong hand used.");
                 }
 
 
@@ -464,10 +473,18 @@ namespace AuthenticationSystem
             //pictureBox1.Image = bitmap;
         }
 
-        string[] displayArrays()
+        public int RoundOff(int number, int interval)
         {
-            String vector = "";
-            string[] vec = new string[18];
+            int remainder = number % interval;
+            number += (remainder < interval / 2) ? -remainder : (interval - remainder);
+            return number;
+        }
+
+        void authenticateUser()
+        {
+            Console.WriteLine("\nAuthenticating user...\n");
+            vector = "";
+            decimal[] vec = new decimal[19];
 
             //LIST ITERATION
             thumbBoneList.Sort();
@@ -483,30 +500,35 @@ namespace AuthenticationSystem
             {
                 thumbMetaAverage += values;
             }
-            thumbMetaAverage = Math.Floor(thumbMetaAverage / thumbMetaCount);
+            thumbMetaAverage = Math.Round((thumbMetaAverage / thumbMetaCount),0,MidpointRounding.AwayFromZero);
+            //thumbMetaAverage = RoundOff((int)thumbMetaAverage, 10);
             //Console.Write("\n" + thumbMetaAverage);
             vector += thumbMetaAverage + ", ";
-            vec[0] = thumbMetaAverage.ToString();
+            vec[0] = thumbMetaAverage;
 
             decimal thumbProxAverage = 0;
             foreach (decimal values in thumbProxTable.Values)
             {
                 thumbProxAverage += values;
             }
-            thumbProxAverage = Math.Floor(thumbProxAverage / thumbProxCount);
+            thumbProxAverage = Math.Round((thumbProxAverage / thumbProxCount), 0, MidpointRounding.AwayFromZero);
+            //thumbProxAverage = Math.Floor(thumbProxAverage / thumbProxCount);
+            //thumbProxAverage = RoundOff((int)thumbProxAverage, 10);
             //Console.Write("\n" + thumbProxAverage);
             vector += thumbProxAverage + ", ";
-            vec[1] = thumbProxAverage.ToString();
+            vec[1] = thumbProxAverage;
 
             decimal thumbIntAverage = 0;
             foreach (decimal values in thumbIntTable.Values)
             {
                 thumbIntAverage += values;
             }
-            thumbIntAverage = Math.Floor(thumbIntAverage / thumbIntCount);
+            thumbIntAverage = Math.Round((thumbIntAverage / thumbIntCount), 0, MidpointRounding.AwayFromZero);
+            //thumbIntAverage = Math.Floor(thumbIntAverage / thumbIntCount);
+            //thumbIntAverage = RoundOff((int)thumbIntAverage, 10);
             //Console.Write("\n" + thumbIntAverage);
             vector += thumbIntAverage + ", ";
-            vec[2] = thumbIntAverage.ToString();
+            vec[2] = thumbIntAverage;
 
             //INDEX
            // Console.Write("\nIndex\n");
@@ -515,20 +537,24 @@ namespace AuthenticationSystem
             {
                 indexMetaAverage += values;
             }
-            indexMetaAverage = Math.Floor(indexMetaAverage / indexMetaCount);
-           // Console.Write("\n" + indexMetaAverage);
+            indexMetaAverage = Math.Round((indexMetaAverage / indexMetaCount), 0, MidpointRounding.AwayFromZero);
+            //indexMetaAverage = Math.Floor(indexMetaAverage / indexMetaCount);
+            //indexMetaAverage = RoundOff((int)indexMetaAverage, 10);
+            // Console.Write("\n" + indexMetaAverage);
             vector += indexMetaAverage + ", ";
-            vec[3] = indexMetaAverage.ToString();
+            vec[3] = indexMetaAverage;
 
             decimal indexProxAverage = 0;
             foreach (decimal values in indexProxTable.Values)
             {
                 indexProxAverage += values;
             }
-            indexProxAverage = Math.Floor(indexProxAverage / indexProxCount);
+            indexProxAverage = Math.Round((indexProxAverage / indexProxCount), 0, MidpointRounding.AwayFromZero);
+            //indexProxAverage = Math.Floor(indexProxAverage / indexProxCount);
+            //indexProxAverage = RoundOff((int)indexProxAverage, 10);
             //Console.Write("\n" + indexProxAverage);
             vector += indexProxAverage + ", ";
-            vec[4] = indexProxAverage.ToString();
+            vec[4] = indexProxAverage;
 
 
             decimal indexIntAverage = 0;
@@ -536,19 +562,24 @@ namespace AuthenticationSystem
             {
                 indexIntAverage += values;
             }
-            indexIntAverage = Math.Floor(indexIntAverage / indexIntCount);
+            indexIntAverage = Math.Round((indexIntAverage / indexIntCount), 0, MidpointRounding.AwayFromZero);
+            //indexIntAverage = Math.Floor(indexIntAverage / indexIntCount);
+            //indexIntAverage = RoundOff((int)indexIntAverage, 10);
             //Console.Write("\n" + indexIntAverage);
             vector += indexIntAverage + ", ";
+            vec[5] = indexIntAverage;
 
             decimal indexDistAverage = 0;
             foreach (decimal values in indexDistTable.Values)
             {
                 indexDistAverage += values;
             }
-            indexDistAverage = Math.Floor(indexDistAverage / indexDistCount);
+            indexDistAverage = Math.Round((indexDistAverage / indexDistCount), 0, MidpointRounding.AwayFromZero);
+            //indexDistAverage = Math.Floor(indexDistAverage / indexDistCount);
+            //indexDistAverage = RoundOff((int)indexDistAverage, 10);
             //Console.Write("\n" + indexDistAverage);
             vector += indexDistAverage + ", ";
-            vec[5] = indexDistAverage.ToString();
+            vec[6] = indexDistAverage;
 
 
             //MIDDLE
@@ -558,40 +589,48 @@ namespace AuthenticationSystem
             {
                 middleMetaAverage += values;
             }
-            middleMetaAverage = Math.Floor(middleMetaAverage / middleMetaCount);
+            middleMetaAverage = Math.Round((middleMetaAverage / middleMetaCount), 0, MidpointRounding.AwayFromZero);
+            //middleMetaAverage = Math.Floor(middleMetaAverage / middleMetaCount);
+            //middleMetaAverage = RoundOff((int)middleMetaAverage, 10);
             //Console.Write("\n" + middleMetaAverage);
             vector += middleMetaAverage + ", ";
-            vec[6] = middleMetaAverage.ToString();
+            vec[7] = middleMetaAverage;
 
             decimal middleProxAverage = 0;
             foreach (decimal values in middleProxTable.Values)
             {
                 middleProxAverage += values;
             }
-            middleProxAverage = Math.Floor(middleProxAverage / middleProxCount);
+            middleProxAverage = Math.Round((middleProxAverage / middleProxCount), 0, MidpointRounding.AwayFromZero);
+            //middleProxAverage = Math.Floor(middleProxAverage / middleProxCount);
+            //middleProxAverage = RoundOff((int)middleProxAverage, 10);
             //Console.Write("\n" + middleProxAverage);
             vector += middleProxAverage + ", ";
-            vec[7] = middleProxAverage.ToString();
+            vec[8] = middleProxAverage;
 
             decimal middleIntAverage = 0;
             foreach (decimal values in middleIntTable.Values)
             {
                 middleIntAverage += values;
             }
-            middleIntAverage = Math.Floor(middleIntAverage / middleIntCount);
+            middleIntAverage = Math.Round((middleIntAverage / middleIntCount), 0, MidpointRounding.AwayFromZero);
+            //middleIntAverage = Math.Floor(middleIntAverage / middleIntCount);
+            //middleIntAverage = RoundOff((int)middleIntAverage, 10);
             //Console.Write("\n" + middleIntAverage);
             vector += middleIntAverage + ", ";
-            vec[8] = middleIntAverage.ToString();
+            vec[9] = middleIntAverage;
 
             decimal middleDistAverage = 0;
             foreach (decimal values in middleDistTable.Values)
             {
                 middleDistAverage += values;
             }
-            middleDistAverage = Math.Floor(middleDistAverage / middleDistCount);
+            middleDistAverage = Math.Round((middleDistAverage / middleDistCount), 0, MidpointRounding.AwayFromZero);
+            //middleDistAverage = Math.Floor(middleDistAverage / middleDistCount);
+            //middleDistAverage = RoundOff((int)middleDistAverage, 10);
             //Console.Write("\n" + middleDistAverage);
             vector += middleDistAverage + ", ";
-            vec[9] = middleDistAverage.ToString();
+            vec[10] = middleDistAverage;
 
 
 
@@ -602,40 +641,48 @@ namespace AuthenticationSystem
             {
                 ringMetaAverage += values;
             }
-            ringMetaAverage = Math.Floor(ringMetaAverage / ringMetaCount);
-           // Console.Write("\n" + ringMetaAverage);
+            ringMetaAverage = Math.Round((ringMetaAverage / ringMetaCount), 0, MidpointRounding.AwayFromZero);
+            //ringMetaAverage = Math.Floor(ringMetaAverage / ringMetaCount);
+            //ringMetaAverage = RoundOff((int)ringMetaAverage, 10);
+            // Console.Write("\n" + ringMetaAverage);
             vector += ringMetaAverage + ", ";
-            vec[10] = ringMetaAverage.ToString();
+            vec[11] = ringMetaAverage;
 
             decimal ringProxAverage = 0;
             foreach (decimal values in ringProxTable.Values)
             {
                 ringProxAverage += values;
             }
-            ringProxAverage = Math.Floor(ringProxAverage / ringProxCount);
-           // Console.Write("\n" + ringProxAverage);
+            ringProxAverage = Math.Round((ringProxAverage / ringProxCount), 0, MidpointRounding.AwayFromZero);
+            //ringProxAverage = Math.Floor(ringProxAverage / ringProxCount);
+            //ringProxAverage = RoundOff((int)ringProxAverage, 10);
+            // Console.Write("\n" + ringProxAverage);
             vector += ringProxAverage + ", ";
-            vec[11] = ringProxAverage.ToString();
+            vec[12] = ringProxAverage;
 
             decimal ringIntAverage = 0;
             foreach (decimal values in ringIntTable.Values)
             {
                 ringIntAverage += values;
             }
-            ringIntAverage = Math.Floor(ringIntAverage / ringIntCount);
+            ringIntAverage = Math.Round((ringIntAverage / ringIntCount), 0, MidpointRounding.AwayFromZero);
+            //ringIntAverage = Math.Floor(ringIntAverage / ringIntCount);
+            //ringIntAverage = RoundOff((int)ringIntAverage, 10);
             //Console.Write("\n" + ringIntAverage);
             vector += ringIntAverage + ", ";
-            vec[12] = ringIntAverage.ToString();
+            vec[13] = ringIntAverage;
 
             decimal ringDistAverage = 0;
             foreach (decimal values in ringDistTable.Values)
             {
                 ringDistAverage += values;
             }
-            ringDistAverage = Math.Floor(ringDistAverage / ringDistCount);
+            ringDistAverage = Math.Round((ringDistAverage / ringDistCount), 0, MidpointRounding.AwayFromZero);
+            //ringDistAverage = Math.Floor(ringDistAverage / ringDistCount);
+            //ringDistAverage = RoundOff((int)ringDistAverage, 10);
             //Console.Write("\n" + ringDistAverage);
             vector += ringDistAverage + ", ";
-            vec[13] = ringDistAverage.ToString();
+            vec[14] = ringDistAverage;
 
 
 
@@ -646,50 +693,376 @@ namespace AuthenticationSystem
             {
                 pinkyMetaAverage += values;
             }
-            pinkyMetaAverage = Math.Floor(pinkyMetaAverage / pinkyMetaCount);
+            pinkyMetaAverage = Math.Round((pinkyMetaAverage / pinkyMetaCount), 0, MidpointRounding.AwayFromZero);
+            //pinkyMetaAverage = Math.Floor(pinkyMetaAverage / pinkyMetaCount);
+            //pinkyMetaAverage = RoundOff((int)pinkyMetaAverage, 10);
             //Console.Write("\n" + pinkyMetaAverage);
             vector += pinkyMetaAverage + ", ";
-            vec[14] = pinkyMetaAverage.ToString();
+            vec[15] = pinkyMetaAverage;
 
             decimal pinkyProxAverage = 0;
             foreach (decimal values in pinkyProxTable.Values)
             {
                 pinkyProxAverage += values;
             }
-            pinkyProxAverage = Math.Floor(pinkyProxAverage / pinkyProxCount);
-           // Console.Write("\n" + pinkyProxAverage);
+            pinkyProxAverage = Math.Round((pinkyProxAverage / pinkyProxCount), 0, MidpointRounding.AwayFromZero);
+            //pinkyProxAverage = Math.Floor(pinkyProxAverage / pinkyProxCount);
+            //pinkyProxAverage = RoundOff((int)pinkyProxAverage, 10);
+            // Console.Write("\n" + pinkyProxAverage);
             vector += pinkyProxAverage + ", ";
-            vec[15] = pinkyProxAverage.ToString();
+            vec[16] = pinkyProxAverage;
 
             decimal pinkyIntAverage = 0;
             foreach (decimal values in pinkyIntTable.Values)
             {
                 pinkyIntAverage += values;
             }
-            pinkyIntAverage = Math.Floor(pinkyIntAverage / pinkyIntCount);
+            pinkyIntAverage = Math.Round((pinkyIntAverage / pinkyIntCount), 0, MidpointRounding.AwayFromZero);
+            //pinkyIntAverage = Math.Floor(pinkyIntAverage / pinkyIntCount);
+            //pinkyIntAverage = RoundOff((int)pinkyIntAverage, 10);
             //Console.Write("\n" + pinkyIntAverage);
             vector += pinkyIntAverage + ", ";
-            vec[16] = pinkyIntAverage.ToString();
+            vec[17] = pinkyIntAverage;
 
             decimal pinkyDistAverage = 0;
             foreach (decimal values in pinkyDistTable.Values)
             {
                 pinkyDistAverage += values;
             }
-            pinkyDistAverage = Math.Floor(pinkyDistAverage / pinkyDistCount);
+            pinkyDistAverage = Math.Round((pinkyDistAverage / pinkyDistCount), 0, MidpointRounding.AwayFromZero);
+            //pinkyDistAverage = Math.Floor(pinkyDistAverage / pinkyDistCount);
+            //pinkyDistAverage = RoundOff((int)pinkyDistAverage, 10);
             //Console.Write("\n" + pinkyDistAverage);
             vector += pinkyDistAverage;
-            vec[17] = pinkyDistAverage.ToString();
+            vec[18] = pinkyDistAverage;
 
-            Console.WriteLine("\n\n" + vector);
-            generateHash(vector);
+            //Console.WriteLine("\n\n" + vector);
+            //generateHash(vector);
+            
 
-            User newUser = new User(txtPin.Text, vec);
+            string newVector = transformVector(vec);
+            Console.WriteLine("\nTransformed Geo: " + newVector + "\n\n");
+            //HashSet<int> transformedPINHash = new HashSet<int>();
+            //transformedPINHash = generateLocalHash(txtPin.Text);
+            /*Console.WriteLine("\nHashed PIN:\n ");
+            foreach (int i in transformedPINHash)
+            {
+                Console.Write(i + " ");
+            }*/
+
+            User newUser = new User(txtPin.Text, newVector);
             newUser.DisplayOutput();
             newUser.authenticatePin(txtPin.Text);
 
-            return vec;
+            //hash pin and check stego image 1 for match
+            HashSet<int> hashedPinSet = new HashSet<int>();
+            hashedPinSet = newUser.generatePINHash(txtPin.Text);
+            newUser.Log(txtPin.Text, vector, newVector);
             
+
+            //Transformed hashed set
+            HashSet<int> transformedGeoHash = new HashSet<int>();
+            transformedGeoHash = newUser.generateUserHash(newVector);
+            
+            //setPixelsStegoImage2("0,0", b);
+            
+            
+            /*Console.WriteLine("\nHashed user geo:\n ");
+            foreach (int i in transformedGeoHash)
+            {
+                Console.Write(i + " ");
+            }*/
+
+
+            //return vec;
+
+        }
+
+        void enrolUser()
+        {
+            Console.WriteLine("\nEnrolling new user...\n");
+            vector = "";
+            decimal[] vec = new decimal[19];
+
+            //LIST ITERATION
+            thumbBoneList.Sort();
+            indexBoneList.Sort();
+            middleBoneList.Sort();
+            ringBoneList.Sort();
+            pinkyBoneList.Sort();
+
+            //THUMB
+            decimal thumbMetaAverage = 0;
+            foreach (decimal values in thumbMetaTable.Values)
+            {
+                thumbMetaAverage += values;
+            }
+            thumbMetaAverage = Math.Round((thumbMetaAverage / thumbMetaCount), 0, MidpointRounding.AwayFromZero);
+            
+            vector += thumbMetaAverage + ", ";
+            vec[0] = thumbMetaAverage;
+
+            decimal thumbProxAverage = 0;
+            foreach (decimal values in thumbProxTable.Values)
+            {
+                thumbProxAverage += values;
+            }
+            thumbProxAverage = Math.Round((thumbProxAverage / thumbProxCount), 0, MidpointRounding.AwayFromZero);
+            
+            vector += thumbProxAverage + ", ";
+            vec[1] = thumbProxAverage;
+
+            decimal thumbIntAverage = 0;
+            foreach (decimal values in thumbIntTable.Values)
+            {
+                thumbIntAverage += values;
+            }
+            thumbIntAverage = Math.Round((thumbIntAverage / thumbIntCount), 0, MidpointRounding.AwayFromZero);
+           
+            vector += thumbIntAverage + ", ";
+            vec[2] = thumbIntAverage;
+
+            //INDEX
+            decimal indexMetaAverage = 0;
+            foreach (decimal values in indexMetaTable.Values)
+            {
+                indexMetaAverage += values;
+            }
+            indexMetaAverage = Math.Round((indexMetaAverage / indexMetaCount), 0, MidpointRounding.AwayFromZero);
+            
+            vector += indexMetaAverage + ", ";
+            vec[3] = indexMetaAverage;
+
+            decimal indexProxAverage = 0;
+            foreach (decimal values in indexProxTable.Values)
+            {
+                indexProxAverage += values;
+            }
+            indexProxAverage = Math.Round((indexProxAverage / indexProxCount), 0, MidpointRounding.AwayFromZero);
+            
+            vector += indexProxAverage + ", ";
+            vec[4] = indexProxAverage;
+
+
+            decimal indexIntAverage = 0;
+            foreach (decimal values in indexIntTable.Values)
+            {
+                indexIntAverage += values;
+            }
+            indexIntAverage = Math.Round((indexIntAverage / indexIntCount), 0, MidpointRounding.AwayFromZero);
+            
+            vector += indexIntAverage + ", ";
+            vec[5] = indexIntAverage;
+
+            decimal indexDistAverage = 0;
+            foreach (decimal values in indexDistTable.Values)
+            {
+                indexDistAverage += values;
+            }
+            indexDistAverage = Math.Round((indexDistAverage / indexDistCount), 0, MidpointRounding.AwayFromZero);
+            
+            vector += indexDistAverage + ", ";
+            vec[6] = indexDistAverage;
+
+
+            //MIDDLE
+            decimal middleMetaAverage = 0;
+            foreach (decimal values in middleMetaTable.Values)
+            {
+                middleMetaAverage += values;
+            }
+            middleMetaAverage = Math.Round((middleMetaAverage / middleMetaCount), 0, MidpointRounding.AwayFromZero);
+            
+            vector += middleMetaAverage + ", ";
+            vec[7] = middleMetaAverage;
+
+            decimal middleProxAverage = 0;
+            foreach (decimal values in middleProxTable.Values)
+            {
+                middleProxAverage += values;
+            }
+            middleProxAverage = Math.Round((middleProxAverage / middleProxCount), 0, MidpointRounding.AwayFromZero);
+            
+            vector += middleProxAverage + ", ";
+            vec[8] = middleProxAverage;
+
+            decimal middleIntAverage = 0;
+            foreach (decimal values in middleIntTable.Values)
+            {
+                middleIntAverage += values;
+            }
+            middleIntAverage = Math.Round((middleIntAverage / middleIntCount), 0, MidpointRounding.AwayFromZero);
+            
+            vector += middleIntAverage + ", ";
+            vec[9] = middleIntAverage;
+
+            decimal middleDistAverage = 0;
+            foreach (decimal values in middleDistTable.Values)
+            {
+                middleDistAverage += values;
+            }
+            middleDistAverage = Math.Round((middleDistAverage / middleDistCount), 0, MidpointRounding.AwayFromZero);
+            
+            vector += middleDistAverage + ", ";
+            vec[10] = middleDistAverage;
+
+
+
+            //RING
+            decimal ringMetaAverage = 0;
+            foreach (decimal values in ringMetaTable.Values)
+            {
+                ringMetaAverage += values;
+            }
+            ringMetaAverage = Math.Round((ringMetaAverage / ringMetaCount), 0, MidpointRounding.AwayFromZero);
+            
+            vector += ringMetaAverage + ", ";
+            vec[11] = ringMetaAverage;
+
+            decimal ringProxAverage = 0;
+            foreach (decimal values in ringProxTable.Values)
+            {
+                ringProxAverage += values;
+            }
+            ringProxAverage = Math.Round((ringProxAverage / ringProxCount), 0, MidpointRounding.AwayFromZero);
+            
+            vector += ringProxAverage + ", ";
+            vec[12] = ringProxAverage;
+
+            decimal ringIntAverage = 0;
+            foreach (decimal values in ringIntTable.Values)
+            {
+                ringIntAverage += values;
+            }
+            ringIntAverage = Math.Round((ringIntAverage / ringIntCount), 0, MidpointRounding.AwayFromZero);
+            
+            vector += ringIntAverage + ", ";
+            vec[13] = ringIntAverage;
+
+            decimal ringDistAverage = 0;
+            foreach (decimal values in ringDistTable.Values)
+            {
+                ringDistAverage += values;
+            }
+            ringDistAverage = Math.Round((ringDistAverage / ringDistCount), 0, MidpointRounding.AwayFromZero);
+            
+            vector += ringDistAverage + ", ";
+            vec[14] = ringDistAverage;
+
+
+
+            //pinky
+            
+            decimal pinkyMetaAverage = 0;
+            foreach (decimal values in pinkyMetaTable.Values)
+            {
+                pinkyMetaAverage += values;
+            }
+            pinkyMetaAverage = Math.Round((pinkyMetaAverage / pinkyMetaCount), 0, MidpointRounding.AwayFromZero);
+            
+            vector += pinkyMetaAverage + ", ";
+            vec[15] = pinkyMetaAverage;
+
+            decimal pinkyProxAverage = 0;
+            foreach (decimal values in pinkyProxTable.Values)
+            {
+                pinkyProxAverage += values;
+            }
+            pinkyProxAverage = Math.Round((pinkyProxAverage / pinkyProxCount), 0, MidpointRounding.AwayFromZero);
+            
+            vector += pinkyProxAverage + ", ";
+            vec[16] = pinkyProxAverage;
+
+            decimal pinkyIntAverage = 0;
+            foreach (decimal values in pinkyIntTable.Values)
+            {
+                pinkyIntAverage += values;
+            }
+            pinkyIntAverage = Math.Round((pinkyIntAverage / pinkyIntCount), 0, MidpointRounding.AwayFromZero);
+            
+            vector += pinkyIntAverage + ", ";
+            vec[17] = pinkyIntAverage;
+
+            decimal pinkyDistAverage = 0;
+            foreach (decimal values in pinkyDistTable.Values)
+            {
+                pinkyDistAverage += values;
+            }
+            pinkyDistAverage = Math.Round((pinkyDistAverage / pinkyDistCount), 0, MidpointRounding.AwayFromZero);
+            
+            vector += pinkyDistAverage;
+            vec[18] = pinkyDistAverage;
+            
+
+
+            string newVector = transformVector(vec);
+            Console.WriteLine("\nTransformed Geo: " + newVector + "\n\n");
+            HashSet<int> transformedPINHash = new HashSet<int>();
+            
+
+            User newUser = new User(txtPin.Text, newVector);
+            newUser.DisplayOutput();
+            newUser.authenticatePin(txtPin.Text);
+            newUser.Log(txtPin.Text, vector, newVector);
+
+
+            //Transformed hashed set
+            HashSet<int> transformedGeoHash = new HashSet<int>();
+            transformedGeoHash = newUser.generateUserHash(newVector);
+            
+            
+            
+
+        }
+
+        public void setPixelsStegoImage2(string pixel, byte[] h)
+        {
+
+            int x = Convert.ToInt16(pixel.Split(',')[0]);
+            int y = Convert.ToInt16(pixel.Split(',')[1]);
+            Console.WriteLine("\n\n X value is: " + x + "\nY value is: " + y + "\n");
+            System.Drawing.Image img = System.Drawing.Image.FromFile("stegoImage2.png");
+            Bitmap bmp = new Bitmap(img);
+            for (int i = 0; i < h.Length; i += 4)
+            {
+                //Console.WriteLine(h[i] + " " + h[i+1] + " " + h[i+2] + " " + h[i+3] + "\n");
+                bmp.SetPixel(x, y, Color.FromArgb(h[i], h[i + 1], h[i + 2], h[i + 3]));
+                x++;
+            }
+            bmp.Save("stegoImage2.png");
+            bmp.Dispose();
+
+
+        }
+
+        string transformVector(decimal[] arr) {
+            decimal[] transformedVector = new decimal[5];
+
+            transformedVector[0] = arr[0] + arr[1] + arr[2];
+            transformedVector[1] = arr[3] + arr[4] + arr[5] + arr[6];
+            transformedVector[2] = arr[7] + arr[8] + arr[9] + arr[10];
+            transformedVector[3] = arr[11] + arr[12] + arr[13] + arr[14];
+            transformedVector[4] = arr[15] + arr[16] + arr[17] + arr[18];
+
+            return Convert.ToString(transformedVector[0]) +","+ Convert.ToString(transformedVector[1] + "," + Convert.ToString(transformedVector[2]) + "," + Convert.ToString(transformedVector[3]) + "," + Convert.ToString(transformedVector[4]));
+        }
+
+        public HashSet<int> generateLocalHash(string input)
+        {
+            byte[] hash;
+            HashSet<int> hashedHashset = new HashSet<int>();
+
+            using (var sha2 = new SHA256CryptoServiceProvider())
+            {
+                hash = sha2.ComputeHash(Encoding.Unicode.GetBytes(input));
+                foreach (byte b in hash)
+                {
+                    //Console.Write(b + " ");
+                    hashedHashset.Add(b);
+                }
+            }
+
+            return hashedHashset;
         }
 
         List<string> getCSV(List<ArrayList> _list)
@@ -715,20 +1088,20 @@ namespace AuthenticationSystem
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+           
             if (timeLeft > 0)
             {
                 timeLeft = timeLeft - 1;
                 lblTimer.Text = Convert.ToString(timeLeft);
+                progressBar1.Value++;
             }
             else
             {
                 timer1.Stop();
                 controller.StopConnection();
                 MessageBox.Show("Scan Stopped");
-                //txtName.Clear();
                 lblFPS.Text = "";
                 lblTimer.Text = "Done";
-                //btnArrays.Enabled = true;
                 MessageBox.Show("Number of finger readings: " + Convert.ToString(fingerReadingCount) + "\nNumber of bone readings: " + Convert.ToString(boneReadingCount));
 
                 List<ArrayList> _listOfLists = new List<ArrayList>();
@@ -758,19 +1131,31 @@ namespace AuthenticationSystem
                 _listOfLists.Add(pinkyDistList);
 
                 List<string> csv = getCSV(_listOfLists);
+                
+                    StreamWriter wr = new StreamWriter(matrixCSVPath, true);
+                    wr.WriteLine("");
+                    foreach (string l in csv)
+                        wr.WriteLine(l);
 
-                StreamWriter wr = new StreamWriter(matrixCSVPath, true);
-                wr.WriteLine("");
-                foreach (string l in csv)
-                    wr.WriteLine(l);
-
-                wr.Close();
+                    wr.Close();
+               
 
             }
         }
 
+        private void startScan(int time)
+        {
+            progressBar1.Maximum = time;
+            timeLeft = time;
+            timer1.Start();
+            controller.StartConnection();
+            controller.FrameReady += newFrameHandler;
+        }
+
         private void btnAuthenticate_Click(object sender, EventArgs e)
         {
+            checkAuthenticateEnrol = true;
+            matrixCSVPath = "";
             //user files
             userFileName = txtPin.Text;
             directory = @"C:\Users\23509384\Desktop\" + userFileName;
@@ -779,7 +1164,6 @@ namespace AuthenticationSystem
             bonesCSVPath = bonesFilePath + "\\" + userFileName + ".csv";
             fingersCSVPath = fingersFilePath + "\\" + userFileName + ".csv";
             matrixCSVPath = directory + "\\Matrix.csv";
-
             if (userFileName != "" && userFileName.Length == 4)
             {
 
@@ -794,14 +1178,9 @@ namespace AuthenticationSystem
 
                     FileStream fingerStream = File.Create(fingersCSVPath);
                     fingerStream.Close();
-
-                    timeLeft = 10;
-                    timer1.Start();
-                    controller.StartConnection();
-                    controller.FrameReady += newFrameHandler;
-
-                    Thread vectorThread = new Thread(new ThreadStart(ThreadFunction));
-                    vectorThread.Start();
+                    progressBar1.Value = 0;
+                    startScan(2);
+                
                 }
                 else
                 {
@@ -815,10 +1194,10 @@ namespace AuthenticationSystem
             }
         }
 
-        private void ThreadFunction() {
+        private void ThreadFunction(object a) {
             try
             {
-                displayArrays();
+                authenticateUser();
             }
             catch (Exception e) {
                 Console.WriteLine(e);
@@ -826,25 +1205,65 @@ namespace AuthenticationSystem
             
         }
 
+        private string assignNewPIN()
+        {
+            string[] enrolledUsers = File.ReadAllLines("enrolledUsers.txt");
+            string[] allUsers = File.ReadAllLines("authenticationPairs.txt");
+            Random rand = new Random();
+            int position = rand.Next(allUsers.Length);
+            string newUserPin = allUsers[position];
+
+            foreach (string used in enrolledUsers) {
+                if (used == newUserPin) {
+                    return "Cancel and receive new PIN";
+                }
+            }
+            
+            return newUserPin;
+        }
+
+
+        private void progressBar1_Click(object sender, EventArgs e)
+        {
+            
+        }
+
         private void addUserToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            checkAuthenticateEnrol = false;
+            matrixCSVPath = "";
+            string pin = assignNewPIN().Split(',')[0];
+            txtPin.Text = pin;
+            directory = @"C:\Users\23509384\Desktop\" + pin;
+            Directory.CreateDirectory(directory);
+            matrixCSVPath = directory + "\\Matrix.csv";
+
+            DialogResult newUserResult = MessageBox.Show(string.Format("Your assigned PIN code is : {0}",pin), "New User", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
+            if (newUserResult == DialogResult.Yes)
+            {
+                //LONG SCAN NEW USER
+                Console.WriteLine("Starting LONG scan for enrolment.");
+                startScan(10);
+                User newUser = new User(pin, "1,2,3,4,5");
+                newUser.addNewEnrolledUser(pin);
+            }
+            else {
+                Console.WriteLine("No new user added.");
+            }
             
         }
 
         private void showVectorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            displayArrays();
-        }
-
-        private void generateHash(string input) {
-            byte[] hash;
-
-            using (var sha2 = new SHA256CryptoServiceProvider()) {
-                hash = sha2.ComputeHash(Encoding.Unicode.GetBytes(input));
-                foreach (byte b in hash) {
-                    Console.Write(b + " ");
-                }
+            if (checkAuthenticateEnrol)
+            {
+                authenticateUser();
             }
+            else
+            {
+                enrolUser();
+            }
+            
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
