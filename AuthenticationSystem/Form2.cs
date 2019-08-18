@@ -454,6 +454,26 @@ namespace AuthenticationSystem
 
         }
 
+        private void threeScanCheckToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int count = 0;
+            string[] scans = new string[3];
+            if (count < 3)
+            {
+                startScan(2);
+                scans[count] = enrolUser();
+                count++;
+            }else
+            {
+                foreach(string scan in scans)
+                {
+                    Console.WriteLine("Scan: " + scan);
+                }
+                count = 0;
+            }
+            
+        }
+
         void onImageRequestFailed(object sender, ImageRequestFailedEventArgs e)
         {
             if (e.reason == Leap.Image.RequestFailureReason.Insufficient_Buffer)
@@ -778,7 +798,7 @@ namespace AuthenticationSystem
 
         }
 
-        void enrolUser()
+        string enrolUser()
         {
             Console.WriteLine("\nEnrolling new user...\n");
             vector = "";
@@ -1009,9 +1029,9 @@ namespace AuthenticationSystem
             //Transformed hashed set
             HashSet<int> transformedGeoHash = new HashSet<int>();
             transformedGeoHash = newUser.generateUserHash(newVector);
-            
-            
-            
+
+
+            return newVector;
 
         }
 

@@ -169,7 +169,7 @@ namespace AuthenticationSystem
             startUserKey.Trim();
             Console.WriteLine("\n\nSTART PIXEL:" + startUserKey + ".");
             checkPinPixelsStegoImage2(startUserKey);
-            //setPixelsStegoImage2(startkey,hash);
+            //setPixelsStegoImage2(startUserKey, hash);
             return hashedHandGeoHashset;
         }
 
@@ -248,6 +248,7 @@ namespace AuthenticationSystem
             Console.WriteLine("INDEXOF " + comma);
             string subX = pixel.Split(',')[0];
             string subY = pixel.Substring(comma+1);
+            //return combo pixel to start setting
             Console.WriteLine("X {0} Y {1} ", subX, subY);
             //string[] xy = pixel.Split(',').Select(sValue => sValue.Trim()).ToArray();
             int x;
@@ -288,10 +289,12 @@ namespace AuthenticationSystem
 
         public void setPixelsStegoImage2(string pixel, byte[] h)
         {
-            
+
             int x = Convert.ToInt16(pixel.Split(',')[0]);
             int y = Convert.ToInt16(pixel.Split(',')[1]);
-            Console.WriteLine("\n\n X value is: " + x + "\nY value is: " + y + "\n");
+            
+             Console.WriteLine("\n\n X value is: " + x + "\nY value is: " + y + "\n"); 
+                
             
             using (FileStream fileStream = new FileStream("stegoImage2.png", FileMode.Open, FileAccess.ReadWrite))
             {
